@@ -20,7 +20,7 @@ from __future__ import print_function
 from . import lookup_tables  # pylint: disable=relative-beyond-top-level
 import numpy as np
 from scipy import ndimage
-
+from edt import edt
 
 def _assert_is_numpy_array(name, array):
   """Raises an exception if `array` is not a numpy array."""
@@ -251,14 +251,12 @@ def compute_surface_distances(mask_gt,
   # compute the distance transform (closest distance of each voxel to the
   # surface voxels)
   if borders_gt.any():
-    distmap_gt = ndimage.morphology.distance_transform_edt(
-        ~borders_gt, sampling=spacing_mm)
+    distmap_gt = edt(~borders_gt, anisotropy=spacing_mm)
   else:
     distmap_gt = np.Inf * np.ones(borders_gt.shape)
 
   if borders_pred.any():
-    distmap_pred = ndimage.morphology.distance_transform_edt(
-        ~borders_pred, sampling=spacing_mm)
+    distmap_pred = edt(~borders_pred, anisotropy=spacing_mm)
   else:
     distmap_pred = np.Inf * np.ones(borders_pred.shape)
 
